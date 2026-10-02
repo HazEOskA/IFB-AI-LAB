@@ -1,11 +1,24 @@
 const routes = [
-  ["O Instytucie","/o-instytucie/"],
-  ["Oferta","/oferta/"],
-  ["Szkolenia","/szkolenia/"],
-  ["Blog","/blog/"],
-  ["Bezpłatna wiedza","/bezplatna-wiedza/"],
-  ["Sklep","/sklep/"],
-  ["AI Lab","/ai-lab/"]
+  {label:"O Instytucie",path:"/o-instytucie/instytut/",children:[
+    ["Instytut","/o-instytucie/instytut/"],
+    ["Ludzie","/o-instytucie/ludzie/"],
+    ["Klienci","/o-instytucie/klienci/"]
+  ]},
+  {label:"Szkolenia",path:"/szkolenia/",children:[
+    ["Świąteczna Kampania","/kurs_kampania_swiateczna/"],
+    ["System Regularnych Darowizn","/system-regularnych-darowizn-w-ngo/"]
+  ]},
+  {label:"Oferta",path:"/strategie-fundraisingowe/",children:[
+    ["Strategie fundraisingowe","/strategie-fundraisingowe/"],
+    ["Wdrażanie fundraisingu","/wdrozenie-fundraisingu-program-12-miesieczny/"],
+    ["Kampanie fundraisingowe","/kampanie-fundraisingowe/"]
+  ]},
+  {label:"Blog",path:"/blog/"},
+  {label:"Bezpłatna wiedza",path:"/bezplatna-wiedza/",children:[
+    ["Bezpłatne ebooki","/bezplatna-wiedza/bezplatne-ebooki/"]
+  ]},
+  {label:"Sklep",path:"/sklep/"},
+  {label:"AI Lab",path:"/ai-lab/"}
 ];
 
 function basePath(){
@@ -29,7 +42,9 @@ function mountChrome(){
         </a>
         <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
         <nav class="nav-links" id="main-nav" aria-label="Główna nawigacja">
-          ${routes.map(([label,path])=>`<a href="${url(path)}">${label}</a>`).join("")}
+          ${routes.map(item=>item.children
+            ? `<div class="nav-group"><a href="${url(item.path)}">${item.label}</a><div class="nav-dropdown">${item.children.map(([label,path])=>`<a href="${url(path)}">${label}</a>`).join("")}</div></div>`
+            : `<a href="${url(item.path)}">${item.label}</a>`).join("")}
           <a class="nav-cta" href="${url("/kontakt/")}">Porozmawiajmy</a>
         </nav>
       </div></div>`;
