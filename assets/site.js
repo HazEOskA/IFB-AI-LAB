@@ -181,7 +181,7 @@ function renderWorkspace(state){
     host.innerHTML=`
       <div class="workspace">
         <span class="eyebrow">IFP AI Fundraising Lab · Orchestrator</span>
-        <h1>Opowiedz, co chcesz osiągnąć.</h1>
+        <h2 style="font-size:clamp(42px,5vw,68px)">Opowiedz, co chcesz osiągnąć.</h2>
         <p class="lede">Nie wybierasz modelu ani promptu. Opisujesz organizację i cel, a system układa właściwą ścieżkę pracy.</p>
         <div class="input-card">
           <label for="brief">Organizacja / sytuacja</label>
@@ -196,7 +196,7 @@ function renderWorkspace(state){
   } else if(state.current==="pack"){
     const pack=buildPack(state);
     host.innerHTML=`
-      <div class="workspace"><span class="eyebrow">Final output</span><h1>Campaign Pack</h1>
+      <div class="workspace"><span class="eyebrow">Final output</span><h2 style="font-size:clamp(42px,5vw,68px)">Campaign Pack</h2>
       <p class="lede">Jedno miejsce z wynikami wszystkich etapów — gotowe do review z fundraiserem.</p>
       <div class="output-card"><div class="pack">${esc(pack)}</div>
       <div class="action-row"><button class="button primary" data-download> Pobierz .txt </button><button class="button secondary" data-skill="orchestrator">Wróć do początku</button></div></div></div>`;
