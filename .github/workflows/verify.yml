@@ -1,0 +1,19 @@
+name: verify
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: node --check assets/site.js
+      - name: Check HTML SEO and local assets
+        run: python scripts/check_static.py
