@@ -1,5 +1,15 @@
 # IFP MOTION + VISUAL SYSTEM — V0.2
 
+## Scope lock
+
+This visual/motion system is a **homepage treatment only**.
+
+- HOME: premium editorial design + motion.
+- Inner pages: keep the V0.1 content-first structure and normal interaction model.
+- Program, offer, blog, shop, people, clients and AI Lab routes are not to become cinematic showcase pages.
+- They may inherit basic brand tokens (type, colors, buttons, spacing) for consistency, but not the homepage scroll choreography.
+- Figma is the reference for HOME only.
+
 ## North star
 
 **Editorial authority × real fundraising proof × restrained technology.**
@@ -157,7 +167,15 @@ Programs: 2-column timeline cells.
 
 Figma file: **IFP — Motion + Visual System V0.2**
 
-Maintain frames/pages for Visual System, Homepage Desktop, Homepage Mobile, AI Lab, and Motion Board.
+The Figma file supports one product surface: **HOME**.
+
+Maintain:
+- Visual System support page,
+- Homepage Desktop,
+- Homepage Mobile,
+- HOME Motion board.
+
+Do not add separate Figma redesigns for offer, programs, blog, shop, people, clients or AI Lab unless a future scope explicitly asks for them.
 
 ## Prototype status
 
