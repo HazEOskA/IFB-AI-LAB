@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://instytutfundraisingu.pl/</loc></url>
-  <url><loc>https://instytutfundraisingu.pl/o-instytucie/</loc></url>
-  <url><loc>https://instytutfundraisingu.pl/oferta/</loc></url>
+  <url><loc>https://instytutfundraisingu.pl/o-instytucie/instytut/</loc></url>
+  <url><loc>https://instytutfundraisingu.pl/o-instytucie/ludzie/</loc></url>
+  <url><loc>https://instytutfundraisingu.pl/o-instytucie/klienci/</loc></url>
   <url><loc>https://instytutfundraisingu.pl/szkolenia/</loc></url>
+  <url><loc>https://instytutfundraisingu.pl/kurs_kampania_swiateczna/</loc></url>
+  <url><loc>https://instytutfundraisingu.pl/system-regularnych-darowizn-w-ngo/</loc></url>
+  <url><loc>https://instytutfundraisingu.pl/strategie-fundraisingowe/</loc></url>
+  <url><loc>https://instytutfundraisingu.pl/wdrozenie-fundraisingu-program-12-miesieczny/</loc></url>
+  <url><loc>https://instytutfundraisingu.pl/kampanie-fundraisingowe/</loc></url>
   <url><loc>https://instytutfundraisingu.pl/blog/</loc></url>
   <url><loc>https://instytutfundraisingu.pl/bezplatna-wiedza/</loc></url>
+  <url><loc>https://instytutfundraisingu.pl/bezplatna-wiedza/bezplatne-ebooki/</loc></url>
   <url><loc>https://instytutfundraisingu.pl/sklep/</loc></url>
   <url><loc>https://instytutfundraisingu.pl/kontakt/</loc></url>
   <url><loc>https://instytutfundraisingu.pl/ai-lab/</loc></url>
