@@ -42,18 +42,23 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 **V0.1 prototype** — AI outputs are deterministic demo outputs. Anthropic integration belongs to F0-01 / the production integration layer and intentionally is not enabled in this showcase.
 
 
-## V0.2 — Motion + Visual System
+## V0.2 — HOME Motion + Visual System
 
-Implemented:
-- editorial homepage redesign with real IFP public imagery,
-- Martyna-led hero,
+**Scope lock:** the premium editorial/motion treatment applies to the **homepage only**.
+
+Implemented on HOME:
+- Martyna-led premium hero,
+- real IFP public imagery,
 - proof/outcome storytelling,
 - campaign visual gallery,
-- program journeys,
-- scroll-driven AI Lab graph,
+- program previews,
+- homepage AI Lab preview,
 - responsive desktop/mobile motion,
-- reduced-motion accessibility,
-- Figma visual system + animated motion boards.
+- reduced-motion accessibility.
+
+All inner routes remain in the simpler V0.1 information architecture and normal content layout. They should be refreshed for content fidelity and consistency, not redesigned as motion showcases.
+
+Figma contains only homepage design/motion support. It is **not** the design target for every route.
 
 Figma: https://www.figma.com/design/VvdMTMt2av5EO52Nm6DacX
 
