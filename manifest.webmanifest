@@ -1,0 +1,9 @@
+{
+  "name": "Instytut Fundraisingu — Prototype V0.1",
+  "short_name": "IFP",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f5ef",
+  "theme_color": "#195c48",
+  "lang": "pl"
+}
