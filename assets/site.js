@@ -22,7 +22,8 @@ const routes = [
 ];
 
 function basePath(){
-  return location.pathname.includes("/ai-lab/") || location.pathname.split("/").filter(Boolean).length ? ".." : ".";
+  const depth=location.pathname.replace(/index\.html$/,"").split("/").filter(Boolean).length;
+  return depth ? "../".repeat(depth).replace(/\/$/,"") : ".";
 }
 function url(path){
   const base = basePath();
