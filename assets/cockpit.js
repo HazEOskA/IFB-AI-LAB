@@ -1,18 +1,20 @@
 (()=>{
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const STORE="ifp_cockpit_v01";
-const state={mode:"chat",provider:"auto",memoryEnabled:true,memory:[],messages:[],status:null,last:null};
+const STORE="ifp_cockpit_v02";
+const state={mode:"chat",provider:"auto",model:null,modelTab:"auto",search:"",catalog:{nvidia:[],openrouter:[]},catalogMeta:{},memoryEnabled:true,memory:[],messages:[],status:null,last:null};
 
 function load(){
   try{
     const x=JSON.parse(localStorage.getItem(STORE)||"{}");
     if(Array.isArray(x.memory)) state.memory=x.memory.slice(-6);
     if(typeof x.memoryEnabled==="boolean") state.memoryEnabled=x.memoryEnabled;
+    if(["auto","nvidia","openrouter"].includes(x.provider)) state.provider=x.provider;
+    if(typeof x.model==="string"||x.model===null) state.model=x.model;
   }catch{}
 }
 function save(){
-  localStorage.setItem(STORE,JSON.stringify({memory:state.memory.slice(-6),memoryEnabled:state.memoryEnabled}));
+  localStorage.setItem(STORE,JSON.stringify({memory:state.memory.slice(-6),memoryEnabled:state.memoryEnabled,provider:state.provider,model:state.model}));
 }
 function esc(s=""){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function renderMemory(){
@@ -53,9 +55,12 @@ function setPreset(id){
 }
 async function getStatus(){
   try{
-    const r=await fetch("/api/cockpit",{headers:{Accept:"application/json"},cache:"no-store"});
+    const r=await fetch("/api/cockpit?catalog=1",{headers:{Accept:"application/json"},cache:"no-store"});
     if(!r.ok) throw new Error("HTTP "+r.status);
     state.status=await r.json();
+    state.catalog=state.status.catalog||state.catalog;
+    state.catalogMeta=state.status.catalog_meta||{};
+    renderModelChoice();
     const rt=state.status.runtime||{};
     $("[data-runtime-status]").textContent=rt.ready?"LIVE":"DEMO";
     $("[data-runtime-status]").classList.toggle("live",!!rt.ready);
@@ -85,7 +90,7 @@ async function send(message){
   try{
     const r=await fetch("/api/cockpit",{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({message:trimmed,mode:state.mode,provider:state.provider,workspace:"IFP Expert",memory:state.memoryEnabled?state.memory:[]})
+      body:JSON.stringify({message:trimmed,mode:state.mode,provider:state.provider,model:state.model,workspace:"IFP Expert",memory:state.memoryEnabled?state.memory:[]})
     });
     const data=await r.json();
     wait.remove();
@@ -94,10 +99,72 @@ async function send(message){
     state.last=data;renderReceipt(data);
   }catch(err){wait.remove();addMessage("system","Runtime error: "+err.message)}
 }
-load();renderMemory();getStatus();
+
+function friendlyModelName(id){
+  const tail=String(id||"").split("/").pop()||id;
+  return tail.replace(/:free$/,"").replace(/[-_]/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+}
+function contextLabel(n){
+  if(!n)return "";
+  return n>=1000000?(Math.round(n/100000)/10+"M ctx"):(Math.round(n/1000)+"K ctx");
+}
+function renderModelChoice(){
+  const kicker=$("[data-model-kicker]"),label=$("[data-model-label]");
+  if(!kicker||!label)return;
+  if(state.provider==="auto"){
+    kicker.textContent="AUTO · IFP ORCHESTRATOR";
+    label.textContent="NVIDIA + OpenRouter + Jev";
+  }else{
+    kicker.textContent=state.provider==="nvidia"?"NVIDIA NIM":"OPENROUTER";
+    label.textContent=state.model||"Wybierz model";
+  }
+}
+function openModelSheet(){
+  const sheet=$("[data-model-sheet]");if(!sheet)return;
+  state.modelTab=state.provider==="auto"?"auto":state.provider;state.search="";
+  const q=$("[data-model-search]");if(q)q.value="";
+  sheet.hidden=false;renderModelSheet();
+}
+function closeModelSheet(){const sheet=$("[data-model-sheet]");if(sheet)sheet.hidden=true}
+function renderModelSheet(){
+  $("[data-provider-tab]").forEach(b=>b.classList.toggle("active",b.dataset.providerTab===state.modelTab));
+  const auto=$("[data-auto-panel]"),browser=$("[data-model-browser]");
+  if(auto)auto.hidden=state.modelTab!=="auto";
+  if(browser)browser.hidden=state.modelTab==="auto";
+  if(state.modelTab!=="auto")renderModelList();
+}
+function renderModelList(){
+  const provider=state.modelTab,all=state.catalog[provider]||[];
+  const q=state.search.trim().toLowerCase();
+  const list=all.filter(m=>!q||String(m.id||"").toLowerCase().includes(q)||String(m.name||"").toLowerCase().includes(q));
+  const count=$("[data-model-count]");if(count)count.textContent=list.length+" modeli";
+  const note=$("[data-catalog-note]"),meta=(state.catalogMeta&&state.catalogMeta[provider])||{};
+  if(note){
+    if(meta.error)note.textContent="Katalog live niedostępny — pokazuję fallback.";
+    else if(provider==="openrouter")note.textContent="FREE = koszt wejścia i wyjścia 0 w aktualnym katalogu OpenRouter.";
+    else note.textContent="Katalog dostępny dla podpiętego klucza NVIDIA.";
+  }
+  const host=$("[data-model-list]");if(!host)return;
+  if(!list.length){host.innerHTML='<div class="model-row"><span><strong>Brak modeli</strong><small>Dodaj klucz providera albo zmień filtr.</small></span></div>';return}
+  host.innerHTML=list.map(m=>{
+    const selected=state.provider===provider&&state.model===m.id;
+    let badges="";
+    if(m.free)badges+='<span class="model-badge free">FREE</span>';
+    const ctx=contextLabel(m.context_length);if(ctx)badges+='<span class="model-badge">'+esc(ctx)+'</span>';
+    if(selected)badges+='<span class="model-badge selected">✓</span>';
+    return '<button class="model-row '+(selected?'selected':'')+'" data-model-id="'+esc(m.id)+'" data-model-provider="'+provider+'"><span><strong>'+esc(m.name||friendlyModelName(m.id))+'</strong><small>'+esc(m.id)+'</small></span><span class="model-badges">'+badges+'</span></button>';
+  }).join("");
+}
+function selectAutoRoute(){
+  state.provider="auto";state.model=null;save();renderModelChoice();closeModelSheet();
+}
+function selectConcreteModel(provider,id){
+  state.provider=provider;state.model=id;save();renderModelChoice();renderModelSheet();setTimeout(closeModelSheet,100);
+}
+
+load();renderMemory();renderModelChoice();getStatus();
 
 $$("[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
-$("[data-provider]").addEventListener("change",e=>state.provider=e.target.value);
 $$("[data-preset]").forEach(b=>b.addEventListener("click",()=>setPreset(b.dataset.preset)));
 $$("[data-quick]").forEach(b=>b.addEventListener("click",()=>{const input=$("[data-input]");input.value=b.dataset.quick;input.focus()}));
 $("[data-memory-toggle]").addEventListener("click",e=>{state.memoryEnabled=!state.memoryEnabled;e.currentTarget.classList.toggle("active",state.memoryEnabled);e.currentTarget.innerHTML=state.memoryEnabled?'<span>●</span> Small Memory ON':'<span>○</span> Small Memory OFF';save()});
@@ -106,4 +173,12 @@ $("[data-memory-toggle]").innerHTML=state.memoryEnabled?'<span>●</span> Small 
 $("[data-clear-memory]").addEventListener("click",()=>{state.memory=[];save();renderMemory()});
 $("[data-form]").addEventListener("submit",e=>{e.preventDefault();const input=$("[data-input]");const msg=input.value;input.value="";send(msg)});
 $("[data-input]").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("[data-form]").requestSubmit()}});
+$("[data-model-trigger]")?.addEventListener("click",openModelSheet);
+$("[data-model-close]")?.addEventListener("click",closeModelSheet);
+$("[data-model-sheet]")?.addEventListener("click",e=>{if(e.target===$("[data-model-sheet]"))closeModelSheet()});
+$("[data-provider-tab]").forEach(b=>b.addEventListener("click",()=>{state.modelTab=b.dataset.providerTab;state.search="";const q=$("[data-model-search]");if(q)q.value="";renderModelSheet()}));
+$("[data-auto-select]")?.addEventListener("click",selectAutoRoute);
+$("[data-model-search]")?.addEventListener("input",e=>{state.search=e.target.value;renderModelList()});
+$("[data-model-list]")?.addEventListener("click",e=>{const b=e.target.closest("[data-model-id]");if(b)selectConcreteModel(b.dataset.modelProvider,b.dataset.modelId)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModelSheet()});
 })();

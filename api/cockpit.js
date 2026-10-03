@@ -10,6 +10,7 @@ function json(res,status,body){
   return res.status(status).json(body);
 }
 function sha(value){return crypto.createHash("sha256").update(String(value)).digest("hex")}
+function validModel(value){return typeof value==="string"&&/^[a-zA-Z0-9._:/-]{2,180}$/.test(value)}
 async function fetchJson(url,options,timeout=22000){
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeout);
   try{
@@ -37,7 +38,7 @@ function fallbackWorkflow(message){
 }
 function codeAuthority(message){
   const s=message.toLowerCase();
-  const sideEffect=/(wyślij|wyslij|opublikuj|złóż wniosek|zloz wniosek|submit|send email|usuń|usun|delete|zapłać|zaplac|purchase)/.test(s);
+  const sideEffect=/(wyślij|wyslij|opublikuj|złóż wniosek|zloz wniosek|submit|send email|usuń|usun|delete|zapłać|zaplac|purchase)/.test(s);
   return sideEffect?{status:"REVIEW_REQUIRED",reason:"external_side_effect"}:{status:"ALLOWED_DRAFT",reason:"analysis_or_draft_only"};
 }
 async function jevRoute(message,mode,workspace,memory){
@@ -103,18 +104,18 @@ function systemPrompt(route,mode){
     "Current workflow: "+route+". Mode: "+mode+"."
   ].join("\n");
 }
-async function callNvidia(message,route,mode,memory){
+async function callNvidia(message,route,mode,memory,model){
   if(!process.env.NVIDIA_API_KEY) throw new Error("NVIDIA_API_KEY not configured");
   const messages=[{role:"system",content:systemPrompt(route,mode)}];
   if(memory?.length) messages.push({role:"system",content:"Small scoped memory (user-provided recent context):\n- "+memory.slice(-6).join("\n- ")});
   messages.push({role:"user",content:message});
   const data=await fetchJson("https://integrate.api.nvidia.com/v1/chat/completions",{
     method:"POST",headers:{Authorization:"Bearer "+process.env.NVIDIA_API_KEY,"Content-Type":"application/json"},
-    body:JSON.stringify({model:NVIDIA_MODEL,messages,temperature:.25,max_tokens:1800,stream:false})
+    body:JSON.stringify({model:validModel(model)?model:NVIDIA_MODEL,messages,temperature:.25,max_tokens:1800,stream:false})
   });
-  return {provider:"nvidia",model:data.model||NVIDIA_MODEL,text:data.choices?.[0]?.message?.content||"",usage:data.usage||null};
+  return {provider:"nvidia",model:data.model||(validModel(model)?model:NVIDIA_MODEL),text:data.choices?.[0]?.message?.content||"",usage:data.usage||null};
 }
-async function callOpenRouter(message,route,mode,memory){
+async function callOpenRouter(message,route,mode,memory,model){
   if(!process.env.OPENROUTER_API_KEY) throw new Error("OPENROUTER_API_KEY not configured");
   const messages=[{role:"system",content:systemPrompt(route,mode)}];
   if(memory?.length) messages.push({role:"system",content:"Small scoped memory (user-provided recent context):\n- "+memory.slice(-6).join("\n- ")});
@@ -122,10 +123,38 @@ async function callOpenRouter(message,route,mode,memory){
   const data=await fetchJson("https://openrouter.ai/api/v1/chat/completions",{
     method:"POST",
     headers:{Authorization:"Bearer "+process.env.OPENROUTER_API_KEY,"Content-Type":"application/json","HTTP-Referer":"https://ifb-ai-lab.vercel.app","X-Title":"IFP Expert Cockpit"},
-    body:JSON.stringify({model:OPENROUTER_MODEL,messages,temperature:.25,max_tokens:1800})
+    body:JSON.stringify({model:validModel(model)?model:OPENROUTER_MODEL,messages,temperature:.25,max_tokens:1800})
   });
-  return {provider:"openrouter",model:data.model||OPENROUTER_MODEL,text:data.choices?.[0]?.message?.content||"",usage:data.usage||null};
+  return {provider:"openrouter",model:data.model||(validModel(model)?model:OPENROUTER_MODEL),text:data.choices?.[0]?.message?.content||"",usage:data.usage||null};
 }
+
+async function getOpenRouterCatalog(){
+  try{
+    const data=await fetchJson("https://openrouter.ai/api/v1/models",{headers:{Accept:"application/json"}},10000);
+    const models=(data.data||[]).map(m=>{
+      const p=m.pricing||{};
+      const free=Number(p.prompt||0)===0&&Number(p.completion||0)===0;
+      return {id:m.id,name:m.name||m.id,context_length:m.context_length||null,free};
+    }).filter(m=>validModel(m.id));
+    models.sort((a,b)=>Number(b.free)-Number(a.free)||String(a.name).localeCompare(String(b.name)));
+    return {models:models.slice(0,140),meta:{live:true,total:models.length}};
+  }catch(err){
+    return {models:[{id:OPENROUTER_MODEL,name:OPENROUTER_MODEL,context_length:null,free:OPENROUTER_MODEL.endsWith(":free")}],meta:{live:false,error:String(err.message||err)}};
+  }
+}
+async function getNvidiaCatalog(){
+  if(!process.env.NVIDIA_API_KEY){
+    return {models:[{id:NVIDIA_MODEL,name:NVIDIA_MODEL,context_length:null,free:true}],meta:{live:false,error:"NVIDIA_API_KEY missing"}};
+  }
+  try{
+    const data=await fetchJson("https://integrate.api.nvidia.com/v1/models",{headers:{Authorization:"Bearer "+process.env.NVIDIA_API_KEY,Accept:"application/json"}},10000);
+    const models=(data.data||[]).map(m=>({id:m.id,name:m.id,context_length:m.context_length||null,free:true})).filter(m=>validModel(m.id));
+    return {models:(models.length?models:[{id:NVIDIA_MODEL,name:NVIDIA_MODEL,context_length:null,free:true}]).slice(0,120),meta:{live:true,total:models.length}};
+  }catch(err){
+    return {models:[{id:NVIDIA_MODEL,name:NVIDIA_MODEL,context_length:null,free:true}],meta:{live:false,error:String(err.message||err)}};
+  }
+}
+
 function demoAnswer(route,gate){
   const labels={
     training_material:"MATERIAŁY SZKOLENIOWE",mentoring:"MENTORING",report:"RAPORT",plan:"PLAN",
@@ -154,7 +183,13 @@ module.exports = async function handler(req,res){
       openrouter:Boolean(process.env.OPENROUTER_API_KEY),
     };
     runtime.ready=runtime.nvidia||runtime.openrouter;
-    return json(res,200,{ok:true,runtime,models:{jev:JEV_MODEL,nvidia:NVIDIA_MODEL,openrouter:OPENROUTER_MODEL},version:"IFP_RUNTIME_V0.1"});
+    const payload={ok:true,runtime,models:{jev:JEV_MODEL,nvidia:NVIDIA_MODEL,openrouter:OPENROUTER_MODEL},version:"IFP_RUNTIME_V0.2"};
+    if(String(req.query?.catalog||"")==="1"){
+      const [nvidiaCatalog,openrouterCatalog]=await Promise.all([getNvidiaCatalog(),getOpenRouterCatalog()]);
+      payload.catalog={nvidia:nvidiaCatalog.models,openrouter:openrouterCatalog.models};
+      payload.catalog_meta={nvidia:nvidiaCatalog.meta,openrouter:openrouterCatalog.meta};
+    }
+    return json(res,200,payload);
   }
   if(req.method!=="POST") return json(res,405,{error:"Method not allowed"});
 
@@ -162,6 +197,7 @@ module.exports = async function handler(req,res){
   const message=String(body.message||"").trim();
   const mode=body.mode==="agent"?"agent":"chat";
   const preferred=["auto","nvidia","openrouter"].includes(body.provider)?body.provider:"auto";
+  const selectedModel=validModel(body.model)?body.model:null;
   const memory=Array.isArray(body.memory)?body.memory.map(String).slice(-6):[];
   const workspace=String(body.workspace||"IFP Expert").slice(0,80);
   if(message.length<2) return json(res,400,{error:"Message is required"});
@@ -169,7 +205,7 @@ module.exports = async function handler(req,res){
 
   const started=Date.now();
   const executionId="ifp_"+crypto.randomUUID();
-  const inputDigest=sha(JSON.stringify({message,mode,workspace,memory}));
+  const inputDigest=sha(JSON.stringify({message,mode,workspace,memory,preferred,selectedModel}));
   const gate=codeAuthority(message);
   let route;
   try{route=await jevRoute(message,mode,workspace,memory)}
@@ -180,23 +216,25 @@ module.exports = async function handler(req,res){
   }
 
   let generation=null;const errors=[];
-  const order=preferred==="nvidia"?["nvidia","openrouter"]:preferred==="openrouter"?["openrouter","nvidia"]:["nvidia","openrouter"];
+  const order=preferred==="nvidia"?["nvidia"]:preferred==="openrouter"?["openrouter"]:["nvidia","openrouter"];
   for(const p of order){
     try{
-      if(p==="nvidia"&&process.env.NVIDIA_API_KEY){generation=await callNvidia(message,route.workflow,mode,memory);break}
-      if(p==="openrouter"&&process.env.OPENROUTER_API_KEY){generation=await callOpenRouter(message,route.workflow,mode,memory);break}
+      if(p==="nvidia"&&process.env.NVIDIA_API_KEY){generation=await callNvidia(message,route.workflow,mode,memory,preferred==="nvidia"?selectedModel:null);break}
+      if(p==="openrouter"&&process.env.OPENROUTER_API_KEY){generation=await callOpenRouter(message,route.workflow,mode,memory,preferred==="openrouter"?selectedModel:null);break}
     }catch(err){errors.push(p+":"+String(err.message||err))}
   }
 
   const answer=(generation?.text||"").trim()||demoAnswer(route.workflow,gate);
   const receipt={
     execution_id:executionId,
-    runtime_version:"IFP_RUNTIME_V0.1",
+    runtime_version:"IFP_RUNTIME_V0.2",
     mode,
     workflow:route.workflow,
     route_source:route.source,
     jev_model:route.model||null,
     jev_confidence:route.confidence??null,
+    requested_provider:preferred,
+    requested_model:selectedModel,
     provider:generation?.provider||"demo",
     model:generation?.model||null,
     authority_gate:gate.status,

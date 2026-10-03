@@ -15,13 +15,13 @@
     <aside class="left-rail" aria-label="Nawigacja cockpit">
       <div class="brand-mark"><span>IFP</span><small>EXPERT</small></div>
       <nav class="tool-nav">
-        <button class="tool-pill active" data-preset="general"><span>⌁</span><b>Copilot</b></button>
-        <button class="tool-pill" data-preset="materials"><span>▤</span><b>Materiały</b></button>
-        <button class="tool-pill" data-preset="mentoring"><span>◉</span><b>Mentoring</b></button>
-        <button class="tool-pill" data-preset="report"><span>▥</span><b>Raport</b></button>
-        <button class="tool-pill" data-preset="plan"><span>↗</span><b>Plan</b></button>
-        <button class="tool-pill" data-preset="document"><span>▧</span><b>Dokument</b></button>
-        <button class="tool-pill" data-preset="eu"><span>EU</span><b>Funding</b></button>
+        <button class="tool-pill active" data-preset="general" aria-label="Copilot"><svg viewBox="0 0 24 24"><path d="M12 2l1.3 5.2L18 10l-4.7 2.8L12 18l-1.3-5.2L6 10l4.7-2.8L12 2Z"/><path d="M19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7L19 16Z"/></svg><b>Copilot</b></button>
+        <button class="tool-pill" data-preset="materials" aria-label="Materiały"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z"/></svg><b>Materiały</b></button>
+        <button class="tool-pill" data-preset="mentoring" aria-label="Mentoring"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/></svg><b>Mentoring</b></button>
+        <button class="tool-pill" data-preset="report" aria-label="Raport"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><b>Raport</b></button>
+        <button class="tool-pill" data-preset="plan" aria-label="Plan"><svg viewBox="0 0 24 24"><path d="M5 19L19 5"/><path d="M11 5h8v8"/></svg><b>Plan</b></button>
+        <button class="tool-pill" data-preset="document" aria-label="Dokument"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/></svg><b>Dokument</b></button>
+        <button class="tool-pill" data-preset="eu" aria-label="EU Funding"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 9.5h8M8 14.5h8M10 7v10"/></svg><b>EU Funding</b></button>
       </nav>
       <div class="rail-foot">
         <span class="dot" data-runtime-dot></span>
@@ -40,11 +40,14 @@
             <button class="active" data-mode="chat">CHAT</button>
             <button data-mode="agent">AGENT</button>
           </div>
-          <select data-provider aria-label="Provider modelu">
-            <option value="auto">AUTO ROUTE</option>
-            <option value="nvidia">NVIDIA</option>
-            <option value="openrouter">OPENROUTER</option>
-          </select>
+          <button type="button" class="model-picker-trigger" data-model-trigger aria-haspopup="dialog">
+            <span class="model-picker-mark">✦</span>
+            <span class="model-picker-copy">
+              <small data-model-kicker>AUTO · IFP ORCHESTRATOR</small>
+              <strong data-model-label>NVIDIA + OpenRouter + Jev</strong>
+            </span>
+            <span class="model-picker-chevron">⌄</span>
+          </button>
         </div>
       </header>
 
@@ -64,8 +67,8 @@
 
       <form class="composer" data-form>
         <div class="memory-row">
+          <button type="button" class="context-chip" data-context-chip>✦ <span>Copilot</span></button>
           <button type="button" class="memory-toggle active" data-memory-toggle><span>●</span> Small Memory ON</button>
-          <span data-workspace-label>Workspace: IFP Expert</span>
         </div>
         <div class="composer-box">
           <textarea data-input rows="2" placeholder="Napisz, czego potrzebujesz…" aria-label="Wiadomość do IFP Expert Copilot"></textarea>
@@ -110,6 +113,43 @@
       </section>
     </aside>
   </main>
+  <div class="model-sheet-backdrop" data-model-sheet hidden>
+    <section class="model-sheet" role="dialog" aria-modal="true" aria-labelledby="model-sheet-title">
+      <header class="model-sheet-head">
+        <div><p class="micro">MODEL MESH</p><h2 id="model-sheet-title">Wybierz model</h2></div>
+        <button type="button" class="sheet-close" data-model-close aria-label="Zamknij">×</button>
+      </header>
+
+      <div class="provider-tabs">
+        <button class="active" data-provider-tab="auto">AUTO</button>
+        <button data-provider-tab="nvidia">NVIDIA</button>
+        <button data-provider-tab="openrouter">OPENROUTER</button>
+      </div>
+
+      <div class="auto-route-panel" data-auto-panel>
+        <button type="button" class="auto-route-card" data-auto-select>
+          <span class="auto-route-icon">✦</span>
+          <span class="auto-route-copy">
+            <small>RECOMMENDED</small>
+            <strong>IFP Orchestrator</strong>
+            <p>Jev wybiera workflow. Runtime dobiera provider i zapisuje APR receipt.</p>
+          </span>
+          <span class="auto-route-tags"><i>JEV</i><i>NVIDIA</i><i>OPENROUTER</i></span>
+        </button>
+      </div>
+
+      <div class="model-browser" data-model-browser hidden>
+        <div class="model-search">
+          <span>⌕</span>
+          <input data-model-search placeholder="Szukaj modelu…" autocomplete="off">
+          <small data-model-count>0 modeli</small>
+        </div>
+        <p class="catalog-note" data-catalog-note></p>
+        <div class="model-list" data-model-list></div>
+      </div>
+    </section>
+  </div>
+
   <script src="../../assets/cockpit.js" defer></script>
 </body>
 </html>
