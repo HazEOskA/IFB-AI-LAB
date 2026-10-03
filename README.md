@@ -69,3 +69,22 @@ See:
 - `docs/MOTION_VISUAL_SYSTEM_V0.2.md`
 
 > Prototype-only note: V0.2 temporarily references approved-looking public assets from the existing IFP WordPress site. Production must migrate owner-approved media into the new asset pipeline instead of hotlinking legacy URLs.
+
+
+## V0.3 — Content Migration
+
+Migrated current public IFP content into the normal inner-page layouts:
+- Martyna profile + real photography,
+- institute / strategy / implementation / campaign offer,
+- current 2026 Christmas Campaign program,
+- Regular Donations System,
+- six current shop products,
+- client outcomes + testimonials + campaign portfolio,
+- selected client logos,
+- free knowledge,
+- 2026 blog topics,
+- current contact details.
+
+See `docs/CONTENT_MIGRATION_V0.3.md` for source normalization and production gates.
+
+**Scope remains locked:** HOME is the only premium motion/Figma-driven surface. Inner routes stay content-first.
