@@ -380,3 +380,68 @@ function initV2Motion(){
 }
 
 initV2Motion();
+initV4MotionPolish();
+initCookieNotice();
+
+
+/* HOME MOTION POLISH V0.4 */
+function initV4MotionPolish(){
+  if(!document.body.classList.contains("v2-home")) return;
+
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const flow=document.querySelector("[data-ai-flow]");
+  const path=document.querySelector("[data-ai-path]");
+  const pulse=document.querySelector("[data-ai-pulse]");
+
+  if(flow && path && pulse && !reduce){
+    let pathLength=0;
+    try{pathLength=path.getTotalLength()}catch{}
+    let raf=false;
+    const drawPulse=()=>{
+      raf=false;
+      if(!pathLength) return;
+      const rect=flow.getBoundingClientRect();
+      const start=window.innerHeight*.80;
+      const end=window.innerHeight*.18;
+      const p=Math.max(0,Math.min(1,(start-rect.top)/(start-end+rect.height*.34)));
+      const point=path.getPointAtLength(pathLength*p);
+      pulse.setAttribute("cx",point.x.toFixed(2));
+      pulse.setAttribute("cy",point.y.toFixed(2));
+      flow.classList.toggle("is-flowing",p>.02 && p<.995);
+    };
+    const request=()=>{
+      if(!raf){raf=true;requestAnimationFrame(drawPulse)}
+    };
+    drawPulse();
+    window.addEventListener("scroll",request,{passive:true});
+    window.addEventListener("resize",request,{passive:true});
+  }
+}
+
+function initCookieNotice(){
+  const key="ifp_cookie_choice_v01";
+  if(localStorage.getItem(key)) return;
+
+  const box=document.createElement("aside");
+  box.className="ifp-cookie";
+  box.setAttribute("role","dialog");
+  box.setAttribute("aria-label","Ustawienia cookies");
+  box.innerHTML=`
+    <div>
+      <strong>Cookies i prywatność</strong>
+      <p>Ten prototyp używa tylko niezbędnych technologii pamięci do działania interfejsu. Cookies analityczne lub marketingowe nie są uruchamiane bez zgody.</p>
+    </div>
+    <div class="ifp-cookie-actions">
+      <button type="button" class="cookie-necessary" data-cookie-choice="necessary">Tylko niezbędne</button>
+      <button type="button" class="cookie-accept" data-cookie-choice="accepted">Akceptuję</button>
+    </div>`;
+  document.body.appendChild(box);
+
+  box.addEventListener("click",event=>{
+    const button=event.target.closest("[data-cookie-choice]");
+    if(!button) return;
+    localStorage.setItem(key,button.dataset.cookieChoice);
+    box.classList.add("is-leaving");
+    window.setTimeout(()=>box.remove(),300);
+  });
+}
