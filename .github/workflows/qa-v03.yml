@@ -1,0 +1,87 @@
+name: qa-v03
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/qa-v03.yml"
+      - "scripts/qa_v03.mjs"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: routes-images-semantics
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Start static preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ifp-http.log 2>&1 &
+          echo $! > /tmp/ifp-http.pid
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+      - name: Route, semantic and image QA
+        run: node scripts/qa_v03.mjs
+        env:
+          ORIGIN: http://127.0.0.1:4173
+
+  lighthouse:
+    name: lighthouse-mobile-desktop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Start static preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ifp-http.log 2>&1 &
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 1
+          done
+      - name: Lighthouse mobile
+        run: |
+          npx --yes lighthouse http://127.0.0.1:4173/ \
+            --quiet \
+            --chrome-flags="--headless --no-sandbox" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=json \
+            --output-path=./lighthouse-mobile.json
+      - name: Lighthouse desktop
+        run: |
+          npx --yes lighthouse http://127.0.0.1:4173/ \
+            --quiet \
+            --preset=desktop \
+            --chrome-flags="--headless --no-sandbox" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=json \
+            --output-path=./lighthouse-desktop.json
+      - name: Print scores
+        run: |
+          node <<'NODE'
+          const fs=require("fs");
+          for (const mode of ["mobile","desktop"]) {
+            const j=JSON.parse(fs.readFileSync(`lighthouse-${mode}.json`,"utf8"));
+            const c=j.categories;
+            const pct=k=>Math.round((c[k]?.score||0)*100);
+            console.log(`LIGHTHOUSE ${mode.toUpperCase()}: performance=${pct("performance")} accessibility=${pct("accessibility")} best-practices=${pct("best-practices")} seo=${pct("seo")}`);
+            const m=j.audits;
+            console.log(`METRICS ${mode.toUpperCase()}: FCP=${m["first-contentful-paint"]?.displayValue} LCP=${m["largest-contentful-paint"]?.displayValue} CLS=${m["cumulative-layout-shift"]?.displayValue} TBT=${m["total-blocking-time"]?.displayValue}`);
+          }
+          NODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-v03
+          path: |
+            lighthouse-mobile.json
+            lighthouse-desktop.json
+          retention-days: 7
