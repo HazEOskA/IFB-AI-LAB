@@ -50,7 +50,7 @@ button{cursor:pointer}
   width:42px;height:42px;border-radius:14px;display:grid;place-items:center;
   background:var(--forest);color:#fff;font-size:13px;letter-spacing:.08em
 }
-.brand-copy small{display:block;font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.brand-copy small{display:block;font-weight:600;color:#59635e;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 .nav-links{display:flex;align-items:center;gap:20px;font-size:14px;font-weight:650}
 .nav-links a{text-decoration:none;color:#35423b}
 .nav-links a:hover,.nav-links a[aria-current="page"]{color:var(--forest)}
@@ -69,7 +69,7 @@ button{cursor:pointer}
   border:0;border-radius:999px;padding:12px 18px;font-weight:800;text-decoration:none;
   display:inline-flex;align-items:center;justify-content:center;gap:8px
 }
-.nav-cta,.button.primary{background:var(--forest);color:#fff}
+.nav-cta,.button.primary{background:var(--forest);color:#fff}\n.nav-links .nav-cta{color:#fff}
 .button.secondary{background:transparent;border:1px solid var(--line)}
 .button.ai{background:var(--ai);color:#fff}
 .menu-toggle{
@@ -263,7 +263,7 @@ textarea{min-height:140px;resize:vertical}
   --v2-paper:#f3efe5;
   --v2-ink:#111613;
   --v2-forest:#173f34;
-  --v2-signal:#c34235;
+  --v2-signal:#bd3d32;
   --v2-lime:#dff06f;
   --v2-sand:#e7dfcf;
   --v2-line:rgba(17,22,19,.14);

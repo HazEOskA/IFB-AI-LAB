@@ -7,6 +7,10 @@ on:
     paths:
       - ".github/workflows/qa-v03.yml"
       - "scripts/qa_v03.mjs"
+      - "index.html"
+      - "**/index.html"
+      - "assets/**"
+      - "favicon.ico"
 
 permissions:
   contents: read
