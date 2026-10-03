@@ -569,3 +569,62 @@ textarea{min-height:140px;resize:vertical}
   .v2-ai-path path{stroke-dashoffset:0!important}
   .v2-progress{display:none}
 }
+
+
+/* =========================================================
+   CONTENT MIGRATION V0.3 — normal inner-page content layer
+   ========================================================= */
+.inner-media-grid{display:grid;grid-template-columns:minmax(260px,.72fr) minmax(0,1.28fr);gap:42px;align-items:start}
+.inner-portrait{background:#e9e2d4;border-radius:var(--radius);overflow:hidden;min-height:520px;display:flex;align-items:flex-end;justify-content:center}
+.inner-portrait img{display:block;width:100%;height:100%;max-height:620px;object-fit:contain;object-position:center bottom}
+.inner-copy h2{margin-top:8px}
+.inner-copy p{color:var(--muted)}
+.fact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:26px 0}
+.fact{padding:18px 0;border-top:1px solid var(--line)}
+.fact strong{display:block;font:700 30px/1 Georgia,serif;color:var(--forest)}
+.fact span{display:block;margin-top:7px;font-size:12px;color:var(--muted)}
+.plain-list{display:grid;gap:8px;padding:0;margin:18px 0;list-style:none}
+.plain-list li{position:relative;padding-left:20px;color:#4d5952}
+.plain-list li:before{content:"";position:absolute;left:0;top:.72em;width:7px;height:7px;border-radius:50%;background:var(--forest)}
+.quote-list{display:grid;gap:18px}
+.quote-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px;display:grid;grid-template-columns:72px 1fr;gap:18px}
+.quote-card img{width:72px;height:72px;border-radius:50%;object-fit:cover}
+.quote-card blockquote{margin:0;font:600 20px/1.35 Georgia,serif}
+.quote-card footer{margin-top:12px;color:var(--muted);font-size:13px}
+.logo-wall{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.logo-tile{min-height:130px;background:#fff;display:grid;place-items:center;padding:24px}
+.logo-tile img{max-width:150px;max-height:70px;object-fit:contain;filter:grayscale(1);opacity:.8}
+.case-study-list{display:grid;gap:30px}
+.case-study{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(0,1.1fr);gap:28px;align-items:center;padding-bottom:30px;border-bottom:1px solid var(--line)}
+.case-study img{width:100%;aspect-ratio:1.35/1;object-fit:cover;border-radius:var(--radius)}
+.case-study h3{font-family:Georgia,serif;font-size:30px}
+.case-study p{color:var(--muted)}
+.meta-line{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
+.week-list{display:grid;gap:0;border-top:1px solid var(--line)}
+.week-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:26px;padding:22px 0;border-bottom:1px solid var(--line)}
+.week-row strong{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--forest)}
+.week-row h3{font-family:Georgia,serif;font-size:26px;margin-bottom:8px}
+.week-row p{margin:0;color:var(--muted)}
+.product-list{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.product-item{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;min-height:280px}
+.product-item h3{font-family:Georgia,serif;font-size:28px;margin:28px 0 10px}
+.product-item p{color:var(--muted)}
+.product-item .button{margin-top:auto;align-self:flex-start}
+.note-box{padding:18px 20px;border-left:3px solid var(--forest);background:#eef4f0;border-radius:0 14px 14px 0;color:#425149}
+.article-list{display:grid;gap:1px;background:var(--line);border-block:1px solid var(--line)}
+.article-row{background:var(--paper);padding:22px 0;display:grid;grid-template-columns:150px minmax(0,1fr) 30px;gap:22px;align-items:center;text-decoration:none}
+.article-row time{font-size:12px;color:var(--muted)}
+.article-row strong{font:600 22px/1.2 Georgia,serif}
+.article-row:hover strong{color:var(--forest)}
+@media(max-width:900px){
+  .inner-media-grid,.case-study{grid-template-columns:1fr}
+  .logo-wall{grid-template-columns:repeat(3,1fr)}
+  .product-list{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .fact-grid{grid-template-columns:1fr 1fr}
+  .logo-wall{grid-template-columns:repeat(2,1fr)}
+  .quote-card{grid-template-columns:56px 1fr}.quote-card img{width:56px;height:56px}
+  .week-row{grid-template-columns:1fr;gap:7px}
+  .article-row{grid-template-columns:1fr 24px}.article-row time{grid-column:1/-1}
+}
