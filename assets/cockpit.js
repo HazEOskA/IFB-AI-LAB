@@ -73,6 +73,14 @@ async function getStatus(){
     $("[data-runtime-status]").textContent="OFFLINE";
   }
 }
+function setInspector(open){
+  const panel=$("[data-inspector]"),backdrop=$("[data-inspector-backdrop]");
+  if(!panel)return;
+  panel.classList.toggle("open",open);
+  panel.setAttribute("aria-hidden",String(!open));
+  if(backdrop)backdrop.hidden=!open;
+}
+
 function renderReceipt(data){
   const r=data.receipt||{};
   $("[data-route]").textContent=data.route?.workflow||"—";
@@ -173,12 +181,12 @@ $("[data-memory-toggle]").innerHTML=state.memoryEnabled?'<span>●</span> Small 
 $("[data-clear-memory]").addEventListener("click",()=>{state.memory=[];save();renderMemory()});
 $("[data-form]").addEventListener("submit",e=>{e.preventDefault();const input=$("[data-input]");const msg=input.value;input.value="";send(msg)});
 $("[data-input]").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("[data-form]").requestSubmit()}});
-$("[data-model-trigger]")?.addEventListener("click",openModelSheet);
+$("[data-model-trigger]")?.addEventListener("click",openModelSheet);\n$("[data-inspector-trigger]")?.addEventListener("click",()=>setInspector(true));\n$("[data-inspector-close]")?.addEventListener("click",()=>setInspector(false));\n$("[data-inspector-backdrop]")?.addEventListener("click",()=>setInspector(false));
 $("[data-model-close]")?.addEventListener("click",closeModelSheet);
 $("[data-model-sheet]")?.addEventListener("click",e=>{if(e.target===$("[data-model-sheet]"))closeModelSheet()});
 $("[data-provider-tab]").forEach(b=>b.addEventListener("click",()=>{state.modelTab=b.dataset.providerTab;state.search="";const q=$("[data-model-search]");if(q)q.value="";renderModelSheet()}));
 $("[data-auto-select]")?.addEventListener("click",selectAutoRoute);
 $("[data-model-search]")?.addEventListener("input",e=>{state.search=e.target.value;renderModelList()});
 $("[data-model-list]")?.addEventListener("click",e=>{const b=e.target.closest("[data-model-id]");if(b)selectConcreteModel(b.dataset.modelProvider,b.dataset.modelId)});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModelSheet()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModelSheet();setInspector(false)}});
 })();
