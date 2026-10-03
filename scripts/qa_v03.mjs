@@ -15,7 +15,8 @@ const routes = [
   "/bezplatna-wiedza/bezplatne-ebooki/",
   "/blog/",
   "/kontakt/",
-  "/ai-lab/"
+  "/ai-lab/",
+  "/admin/cockpit/"
 ];
 
 const failures = [];
@@ -71,7 +72,7 @@ for (const route of routes) {
   }
 }
 
-for (const asset of ["/assets/styles.css", "/assets/site.js", "/robots.txt", "/sitemap.xml"]) {
+for (const asset of ["/assets/styles.css", "/assets/site.js", "/assets/cockpit.css", "/assets/cockpit.js", "/robots.txt", "/sitemap.xml"]) {
   try {
     const res = await get(new URL(asset, ORIGIN));
     if (!res.ok) failures.push(`${asset}: HTTP ${res.status}`);

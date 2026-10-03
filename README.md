@@ -88,3 +88,22 @@ Migrated current public IFP content into the normal inner-page layouts:
 See `docs/CONTENT_MIGRATION_V0.3.md` for source normalization and production gates.
 
 **Scope remains locked:** HOME is the only premium motion/Figma-driven surface. Inner routes stay content-first.
+
+
+## V0.4 — IFP Expert Cockpit / AI Runtime
+
+Private preview route: `/admin/cockpit/`
+
+Implemented:
+- CHAT / AGENT cockpit,
+- Jev Decisions routing through OpenRouter,
+- NVIDIA + OpenRouter provider mesh,
+- deterministic fallback when API keys are absent,
+- small scoped local memory,
+- authority gate for external side effects,
+- APR-style execution receipt,
+- materials / mentoring / reports / plans / documents / EU funding workspaces.
+
+See `docs/IFP_AI_RUNTIME_V0.1.md`.
+
+The cockpit is `noindex` but is **not production-authenticated yet**. Real private production use requires an authentication layer.

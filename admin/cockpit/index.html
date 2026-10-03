@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>IFP Expert Cockpit — Martyna</title>
+  <meta name="description" content="Prywatny cockpit ekspercki IFP: chat, agent, materiały, mentoring, raporty, dokumenty i EU desk.">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://ifb-ai-lab.vercel.app/admin/cockpit/">
+  <meta name="theme-color" content="#0d1714">
+  <link rel="stylesheet" href="../../assets/cockpit.css">
+</head>
+<body>
+  <main class="cockpit-shell">
+    <aside class="left-rail" aria-label="Nawigacja cockpit">
+      <div class="brand-mark"><span>IFP</span><small>EXPERT</small></div>
+      <nav class="tool-nav">
+        <button class="tool-pill active" data-preset="general"><span>⌁</span><b>Copilot</b></button>
+        <button class="tool-pill" data-preset="materials"><span>▤</span><b>Materiały</b></button>
+        <button class="tool-pill" data-preset="mentoring"><span>◉</span><b>Mentoring</b></button>
+        <button class="tool-pill" data-preset="report"><span>▥</span><b>Raport</b></button>
+        <button class="tool-pill" data-preset="plan"><span>↗</span><b>Plan</b></button>
+        <button class="tool-pill" data-preset="document"><span>▧</span><b>Dokument</b></button>
+        <button class="tool-pill" data-preset="eu"><span>EU</span><b>Funding</b></button>
+      </nav>
+      <div class="rail-foot">
+        <span class="dot" data-runtime-dot></span>
+        <small>IFP Runtime V0.1</small>
+      </div>
+    </aside>
+
+    <section class="chat-stage">
+      <header class="cockpit-topbar">
+        <div>
+          <p class="micro">MARTYNA / PRIVATE WORKSPACE</p>
+          <h1>IFP Expert Copilot</h1>
+        </div>
+        <div class="top-controls">
+          <div class="mode-switch" role="group" aria-label="Tryb pracy">
+            <button class="active" data-mode="chat">CHAT</button>
+            <button data-mode="agent">AGENT</button>
+          </div>
+          <select data-provider aria-label="Provider modelu">
+            <option value="auto">AUTO ROUTE</option>
+            <option value="nvidia">NVIDIA</option>
+            <option value="openrouter">OPENROUTER</option>
+          </select>
+        </div>
+      </header>
+
+      <section class="chat-scroll" data-chat aria-live="polite">
+        <div class="welcome">
+          <p class="eyebrow">IFP EXPERT COCKPIT</p>
+          <h2>Co dzisiaj robimy?</h2>
+          <p>Materiały szkoleniowe, mentoring, raport, plan, dokument albo analiza programu finansowania. W trybie AGENT runtime dobiera workflow, provider i zapisuje receipt wykonania.</p>
+          <div class="quick-grid">
+            <button data-quick="Przygotuj materiał szkoleniowy do 90-minutowego mentoringu. Najpierw wypisz brakujące dane, potem plan, ćwiczenie i zadanie domowe.">Materiał szkoleniowy <span>↗</span></button>
+            <button data-quick="Przygotuj mnie do rozmowy mentoringowej z kursantem. Zrób brief, 5 pytań, ryzyka i 3 rekomendowane następne kroki.">Mentoring prep <span>↗</span></button>
+            <button data-quick="Zrób raport z postępu kursanta na podstawie informacji, które podam. Oddziel fakty, założenia i braki danych.">Raport <span>↗</span></button>
+            <button data-quick="Przeanalizuj dokument programu europejskiego, który wkleję. Nie zgaduj kryteriów. Zbuduj requirements matrix i listę braków.">EU Funding Desk <span>↗</span></button>
+          </div>
+        </div>
+      </section>
+
+      <form class="composer" data-form>
+        <div class="memory-row">
+          <button type="button" class="memory-toggle active" data-memory-toggle><span>●</span> Small Memory ON</button>
+          <span data-workspace-label>Workspace: IFP Expert</span>
+        </div>
+        <div class="composer-box">
+          <textarea data-input rows="2" placeholder="Napisz, czego potrzebujesz…" aria-label="Wiadomość do IFP Expert Copilot"></textarea>
+          <button type="submit" class="send-btn" aria-label="Wyślij">↗</button>
+        </div>
+        <p class="composer-note">AI przygotowuje analizę i drafty. Wysyłka, publikacja i składanie wniosków pozostają poza automatyczną egzekucją.</p>
+      </form>
+    </section>
+
+    <aside class="inspector">
+      <div class="inspector-head">
+        <p class="micro">RUNTIME INSPECTOR</p>
+        <span class="status-badge" data-runtime-status>CHECKING</span>
+      </div>
+
+      <section class="inspect-block">
+        <h3>Model Mesh</h3>
+        <div class="provider-line"><span>Jev Decisions</span><b data-jev-status>—</b></div>
+        <div class="provider-line"><span>NVIDIA NIM</span><b data-nvidia-status>—</b></div>
+        <div class="provider-line"><span>OpenRouter</span><b data-openrouter-status>—</b></div>
+      </section>
+
+      <section class="inspect-block">
+        <h3>Last route</h3>
+        <dl class="route-data">
+          <div><dt>Workflow</dt><dd data-route>—</dd></div>
+          <div><dt>Jev</dt><dd data-jev>—</dd></div>
+          <div><dt>Provider</dt><dd data-used-provider>—</dd></div>
+          <div><dt>Model</dt><dd data-model>—</dd></div>
+          <div><dt>Gate</dt><dd data-gate>—</dd></div>
+        </dl>
+      </section>
+
+      <section class="inspect-block">
+        <div class="block-title"><h3>Small Memory</h3><button data-clear-memory>clear</button></div>
+        <div class="memory-list" data-memory-list><p>Brak zapisanych ustaleń.</p></div>
+      </section>
+
+      <section class="inspect-block apr-block">
+        <div class="block-title"><h3>APR Receipt</h3><span>V0.1</span></div>
+        <pre data-receipt>NO EXECUTION YET</pre>
+      </section>
+    </aside>
+  </main>
+  <script src="../../assets/cockpit.js" defer></script>
+</body>
+</html>
