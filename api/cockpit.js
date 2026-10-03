@@ -131,7 +131,10 @@ async function callOpenRouter(message,route,mode,memory,model){
 async function getOpenRouterCatalog(){
   try{
     const data=await fetchJson("https://openrouter.ai/api/v1/models",{headers:{Accept:"application/json"}},10000);
-    const models=(data.data||[]).map(m=>{
+    const models=(data.data||[]).filter(m=>{
+      const out=m.architecture?.output_modalities;
+      return !Array.isArray(out)||out.length===0||out.includes("text");
+    }).map(m=>{
       const p=m.pricing||{};
       const free=Number(p.prompt||0)===0&&Number(p.completion||0)===0;
       return {id:m.id,name:m.name||m.id,context_length:m.context_length||null,free};
