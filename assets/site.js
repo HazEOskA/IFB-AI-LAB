@@ -46,6 +46,7 @@ function mountChrome(){
           ${routes.map(item=>item.children
             ? `<div class="nav-group"><a href="${url(item.path)}">${item.label}</a><div class="nav-dropdown">${item.children.map(([label,path])=>`<a href="${url(path)}">${label}</a>`).join("")}</div></div>`
             : `<a href="${url(item.path)}">${item.label}</a>`).join("")}
+          <a class="nav-copilot-test" href="${url("/admin/cockpit/")}"><span>✦</span> Expert Copilot <small>TEST</small></a>
           <a class="nav-cta" href="${url("/kontakt/")}">Porozmawiajmy</a>
         </nav>
       </div></div>`;
@@ -71,7 +72,7 @@ function mountChrome(){
           </div>
           <div><strong>Instytut</strong><a href="${url("/o-instytucie/")}">O nas</a><a href="${url("/oferta/")}">Oferta</a><a href="${url("/kontakt/")}">Kontakt</a></div>
           <div><strong>Wiedza</strong><a href="${url("/blog/")}">Blog</a><a href="${url("/bezplatna-wiedza/")}">Bezpłatna wiedza</a><a href="${url("/szkolenia/")}">Szkolenia</a></div>
-          <div><strong>AI</strong><a href="${url("/ai-lab/")}">IFP AI Lab</a><a href="${url("/sklep/")}">Narzędzia</a></div>
+          <div><strong>AI</strong><a href="${url("/ai-lab/")}">IFP AI Lab</a><a href="${url("/admin/cockpit/")}">Expert Copilot · test</a><a href="${url("/sklep/")}">Narzędzia</a></div>
         </div>
         <div class="credit">Prototype V0.1 · AI concept & system architecture — OsaTechGPT / Bartosz Osiński. Production attribution subject to agreement with Instytut Fundraisingu.</div>
       </div></footer>`;
