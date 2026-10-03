@@ -1,8 +1,22 @@
 const crypto = require("crypto");
 
 const JEV_MODEL = process.env.JEV_MODEL || "typesafe/jev-1.13";
-const NVIDIA_MODEL = process.env.NVIDIA_MODEL || "openai/gpt-oss-120b";
-const OPENROUTER_MODEL = process.env.OPENROUTER_CHAT_MODEL || "openai/gpt-oss-120b:free";
+const NVIDIA_MODEL = process.env.NVIDIA_MODEL || "nvidia/nemotron-3-super-120b-a12b";
+const OPENROUTER_MODEL = process.env.OPENROUTER_CHAT_MODEL || "qwen/qwen3.8-27b:free";
+const NVIDIA_AUTO_PREFERENCE = [
+  NVIDIA_MODEL,
+  "nvidia/nemotron-3-super-120b-a12b",
+  "z-ai/glm-5.3",
+  "moonshotai/kimi-k3",
+  "openai/gpt-oss-20b"
+];
+const OPENROUTER_AUTO_PREFERENCE = [
+  OPENROUTER_MODEL,
+  "qwen/qwen3.8-27b:free",
+  "nvidia/nemotron-3-super-120b-a12b:free",
+  "google/gemma-4-31b-it:free",
+  "thinkingmachines/inkling:free"
+];
 
 function json(res,status,body){
   res.setHeader("Cache-Control","no-store");
@@ -158,23 +172,44 @@ async function getNvidiaCatalog(){
   }
 }
 
-function demoAnswer(route,gate){
+async function resolveAutoModels(){
+  const [nvidiaCatalog,openrouterCatalog]=await Promise.all([getNvidiaCatalog(),getOpenRouterCatalog()]);
+  const nvidiaIds=new Set((nvidiaCatalog.models||[]).map(m=>m.id));
+  const openrouterIds=new Set((openrouterCatalog.models||[]).map(m=>m.id));
+  const nvidia=NVIDIA_AUTO_PREFERENCE.find(id=>nvidiaIds.has(id))||null;
+  const openrouter=OPENROUTER_AUTO_PREFERENCE.find(id=>openrouterIds.has(id))||null;
+  return {
+    nvidia,
+    openrouter,
+    catalog_meta:{nvidia:nvidiaCatalog.meta,openrouter:openrouterCatalog.meta}
+  };
+}
+
+function runtimeFallbackAnswer(route,gate,errors,hasAnyProvider){
   const labels={
     training_material:"MATERIAŁY SZKOLENIOWE",mentoring:"MENTORING",report:"RAPORT",plan:"PLAN",
     document:"DOKUMENT",eu_funding:"EU FUNDING",general_advice:"DORADCA"
   };
+  if(!hasAnyProvider){
+    return [
+      "RUNTIME OFFLINE — brak skonfigurowanego providera generatywnego.",
+      "",
+      "ROUTE: "+(labels[route]||route),
+      "AUTHORITY: "+gate.status,
+      "",
+      "Dodaj NVIDIA_API_KEY i/lub OPENROUTER_API_KEY do środowiska runtime."
+    ].join("\n");
+  }
   return [
-    "DEMO RUNTIME — provider generatywny nie jest jeszcze podpięty kluczem.",
+    "RUNTIME ERROR — routing zadziałał, ale generowanie odpowiedzi nie powiodło się.",
     "",
     "ROUTE: "+(labels[route]||route),
     "AUTHORITY: "+gate.status,
     "",
-    "Runtime i routing działają. Żeby ten krok generował treść live, dodaj NVIDIA_API_KEY i/lub OPENROUTER_API_KEY do środowiska Vercel.",
+    "PROVIDER ERRORS:",
+    ...(errors.length?errors.map(e=>"- "+e):["- brak odpowiedzi z wybranego modelu"]),
     "",
-    "3 następne działania:",
-    "1. Dodaj klucz providera do env.",
-    "2. Uruchom ten sam prompt ponownie i sprawdź receipt.",
-    "3. Po pierwszych 10–20 runach porównaj jakość routingu Jev z ręcznie oznaczonym workflow."
+    "APR receipt zawiera dokładny provider/model i błąd wykonania."
   ].join("\n");
 }
 
@@ -186,7 +221,7 @@ module.exports = async function handler(req,res){
       openrouter:Boolean(process.env.OPENROUTER_API_KEY),
     };
     runtime.ready=runtime.nvidia||runtime.openrouter;
-    const payload={ok:true,runtime,models:{jev:JEV_MODEL,nvidia:NVIDIA_MODEL,openrouter:OPENROUTER_MODEL},version:"IFP_RUNTIME_V0.2"};
+    const payload={ok:true,runtime,models:{jev:JEV_MODEL,nvidia:NVIDIA_MODEL,openrouter:OPENROUTER_MODEL},version:"IFP_RUNTIME_V0.2.1"};
     if(String(req.query?.catalog||"")==="1"){
       const [nvidiaCatalog,openrouterCatalog]=await Promise.all([getNvidiaCatalog(),getOpenRouterCatalog()]);
       payload.catalog={nvidia:nvidiaCatalog.models,openrouter:openrouterCatalog.models};
@@ -219,18 +254,35 @@ module.exports = async function handler(req,res){
   }
 
   let generation=null;const errors=[];
+  let autoModels={nvidia:null,openrouter:null,catalog_meta:null};
+  if(preferred==="auto"){
+    try{autoModels=await resolveAutoModels()}
+    catch(err){errors.push("catalog:"+String(err.message||err))}
+  }
   const order=preferred==="nvidia"?["nvidia"]:preferred==="openrouter"?["openrouter"]:["nvidia","openrouter"];
   for(const p of order){
     try{
-      if(p==="nvidia"&&process.env.NVIDIA_API_KEY){generation=await callNvidia(message,route.workflow,mode,memory,preferred==="nvidia"?selectedModel:null);break}
-      if(p==="openrouter"&&process.env.OPENROUTER_API_KEY){generation=await callOpenRouter(message,route.workflow,mode,memory,preferred==="openrouter"?selectedModel:null);break}
+      if(p==="nvidia"&&process.env.NVIDIA_API_KEY){
+        const model=preferred==="nvidia"?selectedModel:autoModels.nvidia;
+        if(!model){errors.push("nvidia:no_live_auto_model");continue}
+        generation=await callNvidia(message,route.workflow,mode,memory,model);break
+      }
+      if(p==="openrouter"&&process.env.OPENROUTER_API_KEY){
+        const model=preferred==="openrouter"?selectedModel:autoModels.openrouter;
+        if(!model){errors.push("openrouter:no_live_auto_model");continue}
+        generation=await callOpenRouter(message,route.workflow,mode,memory,model);break
+      }
+      if(p==="nvidia"&&!process.env.NVIDIA_API_KEY) errors.push("nvidia:provider_not_configured");
+      if(p==="openrouter"&&!process.env.OPENROUTER_API_KEY) errors.push("openrouter:provider_not_configured");
     }catch(err){errors.push(p+":"+String(err.message||err))}
   }
 
-  const answer=(generation?.text||"").trim()||demoAnswer(route.workflow,gate);
+  const hasAnyProvider=Boolean(process.env.NVIDIA_API_KEY||process.env.OPENROUTER_API_KEY);
+  const answer=(generation?.text||"").trim()||runtimeFallbackAnswer(route.workflow,gate,errors,hasAnyProvider);
+  if(!generation&&errors.length) console.warn(JSON.stringify({event:"ifp_generation_failed",execution_id:executionId,preferred,errors}));
   const receipt={
     execution_id:executionId,
-    runtime_version:"IFP_RUNTIME_V0.2",
+    runtime_version:"IFP_RUNTIME_V0.2.1",
     mode,
     workflow:route.workflow,
     route_source:route.source,
@@ -238,7 +290,8 @@ module.exports = async function handler(req,res){
     jev_confidence:route.confidence??null,
     requested_provider:preferred,
     requested_model:selectedModel,
-    provider:generation?.provider||"demo",
+    auto_models:preferred==="auto"?{nvidia:autoModels.nvidia,openrouter:autoModels.openrouter}:undefined,
+    provider:generation?.provider||"none",
     model:generation?.model||null,
     authority_gate:gate.status,
     authority_reason:gate.reason,
