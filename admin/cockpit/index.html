@@ -4,154 +4,124 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>IFP Expert Copilot — Martyna</title>
-  <meta name="description" content="Prywatny cockpit ekspercki IFP: chat, agent, materiały, mentoring, raporty, dokumenty i EU desk.">
+  <meta name="description" content="Prywatny IFP Expert Copilot: prosty chat ekspercki z agentowym runtime, pamięcią i APR.">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="canonical" href="https://ifb-ai-lab.vercel.app/admin/cockpit/">
-  <meta name="theme-color" content="#2458b8">
+  <meta name="theme-color" content="#184b9f">
   <link rel="stylesheet" href="../../assets/cockpit.css">
 </head>
 <body>
-  <main class="cockpit-shell wysa-shell">
-    <header class="cockpit-topbar">
-      <div class="assistant-identity">
-        <div class="assistant-avatar" aria-hidden="true"><span>✦</span></div>
+  <main class="wysa-app">
+    <header class="app-bar">
+      <button type="button" class="ghost-icon" data-inspector-trigger aria-label="Runtime inspector">i</button>
+      <div class="app-title">
+        <div class="title-avatar"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#ffffff"/><path d="M18 31c0-13 6-21 14-21s14 8 14 21v12c0 7-6 11-14 11S18 50 18 43V31Z" fill="#18334f"/><ellipse cx="32" cy="35" rx="10" ry="14" fill="#f7fbff"/><ellipse cx="27" cy="26" rx="2.2" ry="2.6" fill="#fff"/><ellipse cx="37" cy="26" rx="2.2" ry="2.6" fill="#fff"/><circle cx="27" cy="26.5" r="1.1" fill="#16324c"/><circle cx="37" cy="26.5" r="1.1" fill="#16324c"/><path d="M28 31l4 3 4-3-4-2-4 2Z" fill="#f3b14b"/><path d="M17 34c-5 2-7 6-5 9 3 1 5-1 8-3M47 34c5 2 7 6 5 9-3 1-5-1-8-3" fill="#18334f"/></svg></div>
         <div>
-          <p class="micro">IFP EXPERT COPILOT</p>
-          <h1>Martyna, jestem gotowy</h1>
-          <div class="runtime-inline"><span class="dot" data-runtime-dot></span><small data-runtime-status>CHECKING</small></div>
+          <strong>IFP Expert</strong>
+          <small><span class="runtime-dot" data-runtime-dot></span><span data-runtime-status>CHECKING</span></small>
         </div>
       </div>
-
-      <div class="top-controls">
-        <div class="mode-switch" role="group" aria-label="Tryb pracy">
-          <button class="active" data-mode="chat">CHAT</button>
-          <button data-mode="agent">AGENT</button>
-        </div>
-        <button type="button" class="model-picker-trigger" data-model-trigger aria-haspopup="dialog">
-          <span class="model-picker-mark">✦</span>
-          <span class="model-picker-copy">
-            <small data-model-kicker>AUTO · IFP ORCHESTRATOR</small>
-            <strong data-model-label>NVIDIA + OpenRouter + Jev</strong>
-          </span>
-          <span class="model-picker-chevron">⌄</span>
-        </button>
-        <button type="button" class="inspector-trigger" data-inspector-trigger aria-label="Otwórz runtime inspector">i</button>
-      </div>
+      <button type="button" class="ghost-icon sparkle" data-model-trigger aria-label="Wybierz model">✦</button>
     </header>
 
-    <nav class="preset-strip" aria-label="Szybkie tryby">
-      <button class="tool-pill active" data-preset="general"><span>✦</span><b>Copilot</b></button>
-      <button class="tool-pill" data-preset="materials"><span>▤</span><b>Materiały</b></button>
-      <button class="tool-pill" data-preset="mentoring"><span>◎</span><b>Mentoring</b></button>
-      <button class="tool-pill" data-preset="report"><span>≣</span><b>Raport</b></button>
-      <button class="tool-pill" data-preset="plan"><span>↗</span><b>Plan</b></button>
-      <button class="tool-pill" data-preset="document"><span>□</span><b>Dokument</b></button>
-      <button class="tool-pill" data-preset="eu"><span>€</span><b>EU Funding</b></button>
-    </nav>
-
-    <section class="chat-stage">
-      <section class="chat-scroll" data-chat aria-live="polite">
-        <div class="welcome">
-          <div class="welcome-avatar" aria-hidden="true"><span>✦</span></div>
-          <div class="welcome-bubble">
-            <p class="eyebrow">IFP EXPERT</p>
-            <h2>Co dzisiaj robimy?</h2>
-            <p>Możemy przygotować materiał szkoleniowy, mentoring, raport, plan, dokument albo analizę programu finansowania.</p>
-          </div>
-
-          <div class="quick-grid" aria-label="Szybkie prompty">
-            <button data-quick="Przygotuj materiał szkoleniowy do 90-minutowego mentoringu. Najpierw wypisz brakujące dane, potem plan, ćwiczenie i zadanie domowe.">Materiał szkoleniowy</button>
-            <button data-quick="Przygotuj mnie do rozmowy mentoringowej z kursantem. Zrób brief, 5 pytań, ryzyka i 3 rekomendowane następne kroki.">Mentoring prep</button>
-            <button data-quick="Zrób raport z postępu kursanta na podstawie informacji, które podam. Oddziel fakty, założenia i braki danych.">Raport z postępu</button>
-            <button data-quick="Przeanalizuj dokument programu europejskiego, który wkleję. Nie zgaduj kryteriów. Zbuduj requirements matrix i listę braków.">EU Funding Desk</button>
+    <section class="conversation" data-chat aria-live="polite">
+      <div class="welcome">
+        <div class="penguin-hero"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#ffffff"/><path d="M18 31c0-13 6-21 14-21s14 8 14 21v12c0 7-6 11-14 11S18 50 18 43V31Z" fill="#18334f"/><ellipse cx="32" cy="35" rx="10" ry="14" fill="#f7fbff"/><ellipse cx="27" cy="26" rx="2.2" ry="2.6" fill="#fff"/><ellipse cx="37" cy="26" rx="2.2" ry="2.6" fill="#fff"/><circle cx="27" cy="26.5" r="1.1" fill="#16324c"/><circle cx="37" cy="26.5" r="1.1" fill="#16324c"/><path d="M28 31l4 3 4-3-4-2-4 2Z" fill="#f3b14b"/><path d="M17 34c-5 2-7 6-5 9 3 1 5-1 8-3M47 34c5 2 7 6 5 9-3 1-5-1-8-3" fill="#18334f"/></svg></div>
+        <div class="assistant-line">
+          <div class="penguin-mini"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#ffffff"/><path d="M18 31c0-13 6-21 14-21s14 8 14 21v12c0 7-6 11-14 11S18 50 18 43V31Z" fill="#18334f"/><ellipse cx="32" cy="35" rx="10" ry="14" fill="#f7fbff"/><ellipse cx="27" cy="26" rx="2.2" ry="2.6" fill="#fff"/><ellipse cx="37" cy="26" rx="2.2" ry="2.6" fill="#fff"/><circle cx="27" cy="26.5" r="1.1" fill="#16324c"/><circle cx="37" cy="26.5" r="1.1" fill="#16324c"/><path d="M28 31l4 3 4-3-4-2-4 2Z" fill="#f3b14b"/><path d="M17 34c-5 2-7 6-5 9 3 1 5-1 8-3M47 34c5 2 7 6 5 9-3 1-5-1-8-3" fill="#18334f"/></svg></div>
+          <div class="assistant-bubble">
+            <p>Cześć Martyna 👋</p>
+            <p>Co dzisiaj robimy?</p>
           </div>
         </div>
-      </section>
-
-      <form class="composer" data-form>
-        <div class="memory-row">
-          <button type="button" class="context-chip" data-context-chip>✦ <span>Copilot</span></button>
-          <button type="button" class="memory-toggle active" data-memory-toggle><span>●</span> Small Memory ON</button>
+        <div class="assistant-line">
+          <div class="penguin-mini ghost"></div>
+          <div class="assistant-bubble small">
+            Materiały szkoleniowe, mentoring, raport, plan, dokument albo analiza finansowania — wybierz kierunek lub po prostu napisz.
+          </div>
         </div>
-        <div class="composer-box">
-          <textarea data-input rows="1" placeholder="Napisz wiadomość…" aria-label="Wiadomość do IFP Expert Copilot"></textarea>
-          <button type="submit" class="send-btn" aria-label="Wyślij">➤</button>
+        <div class="quick-replies">
+          <button data-quick="Przygotuj materiał szkoleniowy do 90-minutowego mentoringu. Najpierw wypisz brakujące dane, potem plan, ćwiczenie i zadanie domowe.">Materiały</button>
+          <button data-quick="Przygotuj mnie do rozmowy mentoringowej z kursantem. Zrób brief, 5 pytań, ryzyka i 3 rekomendowane następne kroki.">Mentoring</button>
+          <button data-quick="Zrób raport z postępu kursanta na podstawie informacji, które podam. Oddziel fakty, założenia i braki danych.">Raport</button>
+          <button data-quick="Przeanalizuj dokument programu europejskiego, który wkleję. Nie zgaduj kryteriów. Zbuduj requirements matrix i listę braków.">EU Funding</button>
         </div>
-        <p class="composer-note">AI przygotowuje analizę i drafty. Wysyłka, publikacja i składanie wniosków pozostają poza automatyczną egzekucją.</p>
-      </form>
+      </div>
     </section>
 
-    <aside class="inspector" data-inspector aria-hidden="true">
-      <div class="inspector-head">
-        <div><p class="micro">RUNTIME INSPECTOR</p><h2>Execution</h2></div>
-        <button type="button" class="inspector-close" data-inspector-close aria-label="Zamknij">×</button>
+    <form class="composer-wrap" data-form>
+      <div class="composer-meta">
+        <button type="button" class="memory-toggle active" data-memory-toggle><span>●</span> Small Memory</button>
+        <div class="mode-switch" role="group" aria-label="Tryb">
+          <button type="button" class="active" data-mode="chat">CHAT</button>
+          <button type="button" data-mode="agent">AGENT</button>
+        </div>
       </div>
+      <div class="composer">
+        <textarea data-input rows="1" placeholder="Napisz wiadomość…" aria-label="Wiadomość do IFP Expert Copilot"></textarea>
+        <button type="submit" class="send-btn" aria-label="Wyślij">➤</button>
+      </div>
+    </form>
 
-      <section class="inspect-block">
+    <aside class="inspector" data-inspector aria-hidden="true">
+      <header>
+        <div><small>RUNTIME</small><h2>Execution</h2></div>
+        <button type="button" data-inspector-close aria-label="Zamknij">×</button>
+      </header>
+      <section>
         <h3>Model Mesh</h3>
-        <div class="provider-line"><span>Jev Decisions</span><b data-jev-status>—</b></div>
-        <div class="provider-line"><span>NVIDIA NIM</span><b data-nvidia-status>—</b></div>
-        <div class="provider-line"><span>OpenRouter</span><b data-openrouter-status>—</b></div>
+        <div class="row"><span>Jev Decisions</span><b data-jev-status>—</b></div>
+        <div class="row"><span>NVIDIA NIM</span><b data-nvidia-status>—</b></div>
+        <div class="row"><span>OpenRouter</span><b data-openrouter-status>—</b></div>
       </section>
-
-      <section class="inspect-block">
+      <section>
         <h3>Last route</h3>
-        <dl class="route-data">
-          <div><dt>Workflow</dt><dd data-route>—</dd></div>
-          <div><dt>Jev</dt><dd data-jev>—</dd></div>
-          <div><dt>Provider</dt><dd data-used-provider>—</dd></div>
-          <div><dt>Model</dt><dd data-model>—</dd></div>
-          <div><dt>Gate</dt><dd data-gate>—</dd></div>
-        </dl>
+        <div class="row"><span>Workflow</span><b data-route>—</b></div>
+        <div class="row"><span>Jev</span><b data-jev>—</b></div>
+        <div class="row"><span>Provider</span><b data-used-provider>—</b></div>
+        <div class="row"><span>Model</span><b data-model>—</b></div>
+        <div class="row"><span>Gate</span><b data-gate>—</b></div>
       </section>
-
-      <section class="inspect-block">
-        <div class="block-title"><h3>Small Memory</h3><button data-clear-memory>clear</button></div>
-        <div class="memory-list" data-memory-list><p>Brak zapisanych ustaleń.</p></div>
+      <section>
+        <div class="section-head"><h3>Small Memory</h3><button type="button" data-clear-memory>clear</button></div>
+        <div data-memory-list><p>Brak zapisanych ustaleń.</p></div>
       </section>
-
-      <section class="inspect-block apr-block">
-        <div class="block-title"><h3>APR Receipt</h3><span>V0.2.1</span></div>
+      <section>
+        <div class="section-head"><h3>APR Receipt</h3><span>V0.2.1</span></div>
         <pre data-receipt>NO EXECUTION YET</pre>
       </section>
     </aside>
-    <button class="inspector-backdrop" data-inspector-backdrop aria-label="Zamknij runtime inspector" hidden></button>
-  </main>
+    <button class="drawer-backdrop" data-inspector-backdrop hidden aria-label="Zamknij panel"></button>
 
-  <div class="model-sheet-backdrop" data-model-sheet hidden>
-    <section class="model-sheet" role="dialog" aria-modal="true" aria-labelledby="model-sheet-title">
-      <header class="model-sheet-head">
-        <div><p class="micro">MODEL MESH</p><h2 id="model-sheet-title">Wybierz model</h2></div>
-        <button type="button" class="sheet-close" data-model-close aria-label="Zamknij">×</button>
-      </header>
-      <div class="provider-tabs">
-        <button class="active" data-provider-tab="auto">AUTO</button>
-        <button data-provider-tab="nvidia">NVIDIA</button>
-        <button data-provider-tab="openrouter">OPENROUTER</button>
-      </div>
-      <div class="auto-route-panel" data-auto-panel>
-        <button type="button" class="auto-route-card" data-auto-select>
-          <span class="auto-route-icon">✦</span>
-          <span class="auto-route-copy">
-            <small>RECOMMENDED</small>
-            <strong>IFP Orchestrator</strong>
-            <p>Jev wybiera workflow. Runtime dobiera provider i zapisuje APR receipt.</p>
-          </span>
-          <span class="auto-route-tags"><i>JEV</i><i>NVIDIA</i><i>OPENROUTER</i></span>
-        </button>
-      </div>
-      <div class="model-browser" data-model-browser hidden>
-        <div class="model-search">
-          <span>⌕</span>
-          <input data-model-search placeholder="Szukaj modelu…" autocomplete="off">
-          <small data-model-count>0 modeli</small>
+    <div class="model-sheet-backdrop" data-model-sheet hidden>
+      <section class="model-sheet" role="dialog" aria-modal="true" aria-labelledby="model-sheet-title">
+        <header>
+          <div><small>MODEL MESH</small><h2 id="model-sheet-title">Wybierz model</h2></div>
+          <button type="button" data-model-close aria-label="Zamknij">×</button>
+        </header>
+        <div class="provider-tabs">
+          <button class="active" data-provider-tab="auto">AUTO</button>
+          <button data-provider-tab="nvidia">NVIDIA</button>
+          <button data-provider-tab="openrouter">OPENROUTER</button>
         </div>
-        <p class="catalog-note" data-catalog-note></p>
-        <div class="model-list" data-model-list></div>
-      </div>
-    </section>
-  </div>
-
+        <div class="auto-panel" data-auto-panel>
+          <button type="button" class="auto-card" data-auto-select>
+            <span>✦</span>
+            <div><strong>IFP Orchestrator</strong><small>Jev → provider → APR receipt</small></div>
+            <em>RECOMMENDED</em>
+          </button>
+        </div>
+        <div class="model-browser" data-model-browser hidden>
+          <div class="model-search">
+            <input data-model-search placeholder="Szukaj modelu…" autocomplete="off">
+            <small data-model-count>0 modeli</small>
+          </div>
+          <p class="catalog-note" data-catalog-note></p>
+          <div class="model-list" data-model-list></div>
+        </div>
+      </section>
+    </div>
+  </main>
   <script src="../../assets/cockpit.js" defer></script>
 </body>
 </html>
