@@ -1,0 +1,19 @@
+{
+  "name": "Hermes — IFP Expert",
+  "short_name": "Hermes",
+  "description": "Prywatny asystent AI Instytutu Fundraisingu",
+  "start_url": "/admin/cockpit/",
+  "scope": "/admin/cockpit/",
+  "display": "standalone",
+  "background_color": "#123657",
+  "theme_color": "#123657",
+  "lang": "pl",
+  "icons": [
+    {
+      "src": "/assets/hermes-mascot.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
