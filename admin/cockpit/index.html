@@ -2,24 +2,33 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>IFP Expert Copilot — Martyna</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Hermes — IFP Expert Copilot</title>
   <meta name="description" content="Prywatny IFP Expert Copilot: prosty chat ekspercki z agentowym runtime, pamięcią i APR.">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="canonical" href="https://ifb-ai-lab.vercel.app/admin/cockpit/">
-  <meta name="theme-color" content="#184b9f">
+  <meta name="theme-color" content="#123657">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hermes">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="../../assets/hermes-mascot.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../assets/cockpit.css">
 </head>
 <body>
   <main class="wysa-app">
-    <h1 class="sr-only">IFP Expert Copilot</h1>
+    <h1 class="sr-only">Hermes — IFP Expert Copilot</h1>
+
     <header class="app-bar">
       <button type="button" class="ghost-icon" data-inspector-trigger aria-label="Runtime inspector">i</button>
       <div class="app-title">
-        <div class="title-avatar"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#ffffff"/><path d="M18 31c0-13 6-21 14-21s14 8 14 21v12c0 7-6 11-14 11S18 50 18 43V31Z" fill="#18334f"/><ellipse cx="32" cy="35" rx="10" ry="14" fill="#f7fbff"/><ellipse cx="27" cy="26" rx="2.2" ry="2.6" fill="#fff"/><ellipse cx="37" cy="26" rx="2.2" ry="2.6" fill="#fff"/><circle cx="27" cy="26.5" r="1.1" fill="#16324c"/><circle cx="37" cy="26.5" r="1.1" fill="#16324c"/><path d="M28 31l4 3 4-3-4-2-4 2Z" fill="#f3b14b"/><path d="M17 34c-5 2-7 6-5 9 3 1 5-1 8-3M47 34c5 2 7 6 5 9-3 1-5-1-8-3" fill="#18334f"/></svg></div>
+        <div class="title-avatar" aria-hidden="true">
+          <img src="../../assets/hermes-mascot.svg" alt="">
+        </div>
         <div>
-          <strong>IFP Expert</strong>
-          <small><span class="runtime-dot" data-runtime-dot></span><span data-runtime-status>CHECKING</span></small>
+          <strong>Hermes</strong>
+          <small><span class="runtime-dot" data-runtime-dot></span><span>IFP EXPERT · </span><span data-runtime-status>CHECKING</span></small>
         </div>
       </div>
       <button type="button" class="ghost-icon sparkle" data-model-trigger aria-label="Wybierz model">✦</button>
@@ -27,20 +36,26 @@
 
     <section class="conversation" data-chat aria-live="polite">
       <div class="welcome">
-        <div class="penguin-hero"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#ffffff"/><path d="M18 31c0-13 6-21 14-21s14 8 14 21v12c0 7-6 11-14 11S18 50 18 43V31Z" fill="#18334f"/><ellipse cx="32" cy="35" rx="10" ry="14" fill="#f7fbff"/><ellipse cx="27" cy="26" rx="2.2" ry="2.6" fill="#fff"/><ellipse cx="37" cy="26" rx="2.2" ry="2.6" fill="#fff"/><circle cx="27" cy="26.5" r="1.1" fill="#16324c"/><circle cx="37" cy="26.5" r="1.1" fill="#16324c"/><path d="M28 31l4 3 4-3-4-2-4 2Z" fill="#f3b14b"/><path d="M17 34c-5 2-7 6-5 9 3 1 5-1 8-3M47 34c5 2 7 6 5 9-3 1-5-1-8-3" fill="#18334f"/></svg></div>
+        <div class="hermes-hero" aria-hidden="true">
+          <span class="hermes-aura"></span>
+          <img src="../../assets/hermes-mascot.svg" alt="">
+        </div>
+
         <div class="assistant-line">
-          <div class="penguin-mini"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#ffffff"/><path d="M18 31c0-13 6-21 14-21s14 8 14 21v12c0 7-6 11-14 11S18 50 18 43V31Z" fill="#18334f"/><ellipse cx="32" cy="35" rx="10" ry="14" fill="#f7fbff"/><ellipse cx="27" cy="26" rx="2.2" ry="2.6" fill="#fff"/><ellipse cx="37" cy="26" rx="2.2" ry="2.6" fill="#fff"/><circle cx="27" cy="26.5" r="1.1" fill="#16324c"/><circle cx="37" cy="26.5" r="1.1" fill="#16324c"/><path d="M28 31l4 3 4-3-4-2-4 2Z" fill="#f3b14b"/><path d="M17 34c-5 2-7 6-5 9 3 1 5-1 8-3M47 34c5 2 7 6 5 9-3 1-5-1-8-3" fill="#18334f"/></svg></div>
+          <div class="hermes-mini" aria-hidden="true"><img src="../../assets/hermes-mascot.svg" alt=""></div>
           <div class="assistant-bubble">
-            <p>Cześć Martyna 👋</p>
+            <p>Cześć Martyna 👋 Jestem Hermes.</p>
             <p>Co dzisiaj robimy?</p>
           </div>
         </div>
+
         <div class="assistant-line">
-          <div class="penguin-mini ghost"></div>
+          <div class="hermes-mini ghost" aria-hidden="true"></div>
           <div class="assistant-bubble small">
             Materiały szkoleniowe, mentoring, raport, plan, dokument albo analiza finansowania — wybierz kierunek lub po prostu napisz.
           </div>
         </div>
+
         <div class="quick-replies">
           <button data-quick="Przygotuj materiał szkoleniowy do 90-minutowego mentoringu. Najpierw wypisz brakujące dane, potem plan, ćwiczenie i zadanie domowe.">Materiały</button>
           <button data-quick="Przygotuj mnie do rozmowy mentoringowej z kursantem. Zrób brief, 5 pytań, ryzyka i 3 rekomendowane następne kroki.">Mentoring</button>
@@ -59,7 +74,7 @@
         </div>
       </div>
       <div class="composer">
-        <textarea data-input rows="1" placeholder="Napisz wiadomość…" aria-label="Wiadomość do IFP Expert Copilot"></textarea>
+        <textarea data-input rows="1" placeholder="Napisz do Hermesa…" aria-label="Wiadomość do Hermesa"></textarea>
         <button type="submit" class="send-btn" aria-label="Wyślij">➤</button>
       </div>
     </form>
@@ -69,12 +84,14 @@
         <div><small>RUNTIME</small><h2>Execution</h2></div>
         <button type="button" data-inspector-close aria-label="Zamknij">×</button>
       </header>
+
       <section>
         <h3>Model Mesh</h3>
         <div class="row"><span>Jev Decisions</span><b data-jev-status>—</b></div>
         <div class="row"><span>NVIDIA NIM</span><b data-nvidia-status>—</b></div>
         <div class="row"><span>OpenRouter</span><b data-openrouter-status>—</b></div>
       </section>
+
       <section>
         <h3>Last route</h3>
         <div class="row"><span>Workflow</span><b data-route>—</b></div>
@@ -83,15 +100,25 @@
         <div class="row"><span>Model</span><b data-model>—</b></div>
         <div class="row"><span>Gate</span><b data-gate>—</b></div>
       </section>
+
       <section>
         <div class="section-head"><h3>Small Memory</h3><button type="button" data-clear-memory>clear</button></div>
         <div data-memory-list><p>Brak zapisanych ustaleń.</p></div>
       </section>
+
       <section>
         <div class="section-head"><h3>APR Receipt</h3><span>V0.2.1</span></div>
         <pre data-receipt>NO EXECUTION YET</pre>
       </section>
+
+      <section class="install-section">
+        <h3>Aplikacja</h3>
+        <p>Hermes może działać jako osobna aplikacja bez paska przeglądarki.</p>
+        <button type="button" class="install-app" data-install-app hidden>Zainstaluj Hermesa</button>
+        <small data-install-note>Instalacja pojawi się, gdy przeglądarka udostępni tryb aplikacji.</small>
+      </section>
     </aside>
+
     <button class="drawer-backdrop" data-inspector-backdrop hidden aria-label="Zamknij panel"></button>
 
     <div class="model-sheet-backdrop" data-model-sheet hidden>
@@ -123,6 +150,8 @@
       </section>
     </div>
   </main>
+
   <script src="../../assets/cockpit.js" defer></script>
+  <script src="../../assets/cockpit-pwa.js" defer></script>
 </body>
 </html>
